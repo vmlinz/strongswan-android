@@ -35,3 +35,4 @@ gen-external-apklibs
 # ignore third party packages #
 app/src/main/jni/openssl/
 app/src/main/jni/strongswan/
+.idea/
