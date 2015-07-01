@@ -12,6 +12,10 @@ Strongswan Android app imported as gradle project and setup for hacking
 * Build the native parts
 * Run the project in Android Studio or using gradlew scripts
 
+# Prepare the source #
+
+* `cd dir_of_strongswan && ./autogen.sh && ./configure && make dist`
+
 # Customize the client #
 
 # References #
