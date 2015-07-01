@@ -1,0 +1,7 @@
+[submodule "app/src/main/jni/strongswan"]
+	path = app/src/main/jni/strongswan
+	url = https://github.com/strongswan/strongswan
+[submodule "app/src/main/jni/openssl"]
+	path = app/src/main/jni/openssl
+	url = git://git.strongswan.org/android-ndk-openssl.git
+	branch = ndk-static
