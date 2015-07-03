@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
     Copyright (C) 2012 Tobias Brunner
     Hochschule fuer Technik Rapperswil
 
@@ -14,17 +13,19 @@
     for more details.
 -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:strongswan="http://schemas.android.com/apk/res/org.strongswan.android"
+    xmlns:strongswan="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical" >
+    android:orientation="vertical">
 
     <fragment
-            class="org.strongswan.android.ui.VpnProfileListFragment"
-            android:id="@+id/profile_list_frag"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            strongswan:read_only="true" />
+        android:id="@+id/profile_list_frag"
+        class="org.strongswan.android.ui.VpnProfileListFragment"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        strongswan:read_only="true"
+        tools:ignore="MissingPrefix" />
 
 </LinearLayout>
