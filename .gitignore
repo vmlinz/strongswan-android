@@ -38,3 +38,4 @@ app/src/main/jni/strongswan/
 .idea/
 app/src/main/libs/
 app/src/main/obj/
+app/app.iml

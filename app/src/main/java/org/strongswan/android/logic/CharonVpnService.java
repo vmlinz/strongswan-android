@@ -31,7 +31,6 @@ import org.strongswan.android.logic.VpnStateService.ErrorState;
 import org.strongswan.android.logic.VpnStateService.State;
 import org.strongswan.android.logic.imc.ImcState;
 import org.strongswan.android.logic.imc.RemediationInstruction;
-import org.strongswan.android.ui.MainActivity;
 
 import android.app.PendingIntent;
 import android.app.Service;
@@ -49,6 +48,7 @@ import android.util.Log;
 
 public class CharonVpnService extends VpnService implements Runnable
 {
+    public static final boolean USE_BYOD = true;
 	private static final String TAG = CharonVpnService.class.getSimpleName();
 	public static final String LOG_FILE = "charon.log";
 
@@ -505,7 +505,7 @@ public class CharonVpnService extends VpnService implements Runnable
 	 *
 	 * @param builder BuilderAdapter for this connection
 	 * @param logfile absolute path to the logfile
-	 * @param boyd enable BYOD features
+	 * @param byod enable BYOD features
 	 * @return TRUE if initialization was successful
 	 */
 	public native boolean initializeCharon(BuilderAdapter builder, String logfile, boolean byod);
@@ -527,6 +527,7 @@ public class CharonVpnService extends VpnService implements Runnable
 	public class BuilderAdapter
 	{
 		private final String mName;
+		private final String mBuilderActivityClassName;
 		private VpnService.Builder mBuilder;
 		private BuilderCache mCache;
 		private BuilderCache mEstablishedCache;
@@ -534,22 +535,31 @@ public class CharonVpnService extends VpnService implements Runnable
 		public BuilderAdapter(String name)
 		{
 			mName = name;
-			mBuilder = createBuilder(name);
+			mBuilderActivityClassName = "org.strongswan.android.ui.MainActivity";
+			mBuilder = createBuilder(name, mBuilderActivityClassName);
 			mCache = new BuilderCache();
 		}
 
-		private VpnService.Builder createBuilder(String name)
+		private VpnService.Builder createBuilder(String name, String activityClassName)
 		{
 			VpnService.Builder builder = new CharonVpnService.Builder();
 			builder.setSession(mName);
+			Class builderActivityClass = null;
 
 			/* even though the option displayed in the system dialog says "Configure"
 			 * we just use our main Activity */
 			Context context = getApplicationContext();
-			Intent intent = new Intent(context, MainActivity.class);
-			PendingIntent pending = PendingIntent.getActivity(context, 0, intent,
-															  PendingIntent.FLAG_UPDATE_CURRENT);
-			builder.setConfigureIntent(pending);
+
+			try {
+				builderActivityClass = Class.forName(activityClassName);
+				Intent intent = new Intent(context, builderActivityClass);
+				PendingIntent pending = PendingIntent.getActivity(context, 0, intent,
+						PendingIntent.FLAG_UPDATE_CURRENT);
+				builder.setConfigureIntent(pending);
+			} catch (ClassNotFoundException e) {
+				e.printStackTrace();
+			}
+
 			return builder;
 		}
 
@@ -639,7 +649,7 @@ public class CharonVpnService extends VpnService implements Runnable
 			}
 			/* now that the TUN device is created we don't need the current
 			 * builder anymore, but we might need another when reestablishing */
-			mBuilder = createBuilder(mName);
+			mBuilder = createBuilder(mName, mBuilderActivityClassName);
 			mEstablishedCache = mCache;
 			mCache = new BuilderCache();
 			return fd.detachFd();
@@ -655,7 +665,7 @@ public class CharonVpnService extends VpnService implements Runnable
 			}
 			try
 			{
-				Builder builder = createBuilder(mName);
+				Builder builder = createBuilder(mName, mBuilderActivityClassName);
 				mEstablishedCache.applyData(builder);
 				fd = builder.establish();
 			}
@@ -731,7 +741,7 @@ public class CharonVpnService extends VpnService implements Runnable
 	{
 		System.loadLibrary("strongswan");
 
-		if (MainActivity.USE_BYOD)
+		if (CharonVpnService.USE_BYOD)
 		{
 			System.loadLibrary("tncif");
 			System.loadLibrary("tnccs");
