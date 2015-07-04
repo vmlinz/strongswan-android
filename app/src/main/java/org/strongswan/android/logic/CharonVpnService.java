@@ -48,7 +48,7 @@ import android.util.Log;
 
 public class CharonVpnService extends VpnService implements Runnable
 {
-    public static final boolean USE_BYOD = true;
+	public static final boolean USE_BYOD = true;
 	private static final String TAG = CharonVpnService.class.getSimpleName();
 	public static final String LOG_FILE = "charon.log";
 
